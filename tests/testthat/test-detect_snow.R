@@ -2,7 +2,7 @@ test_that("detect_snow loads test tif and returns expected outputs", {
 
   tif <- system.file(
     "extdata",
-    "example_s2_rgb_swir_20m.tif",
+    "example_s2_20m.tif",
     package = "snowsense"
   )
 
@@ -10,7 +10,10 @@ test_that("detect_snow loads test tif and returns expected outputs", {
 
   x <- terra::rast(tif)
 
-  res <- detect_snow(x)
+  res <- detect_snow(x, bands= list(
+    green=3,
+    swir=10
+  ))
 
   expect_type(res, "list")
   expect_named(res, c("index", "snow_mask", "threshold"))
