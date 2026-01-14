@@ -9,7 +9,24 @@
   } else if (index == "rgb_brightness") {
     out <- (x[[bands$red]] + x[[bands$green]] + x[[bands$blue]]) / 3
 
-  } else {
+  } else if (index == "WSI") {
+
+    #TODO: finish wsi index (doi: 10.1007/s00703-020-00749-y)
+
+    #extract bands
+    Rr <- x[[bands$red]]
+    Rg <- x[[bands$green]]
+    Rn <- x[[bands$nir]]
+
+
+    #extract brightness value
+    V <- terra::app(c(Rr, Rg, Rn), fun = max, na.rm = TRUE)
+
+    # Hue proxy (normalized)
+    H <- terra::app(c(Rr, Rg, Rn), fun = min, na.rm = TRUE) / V
+  }
+
+  else {
     stop("Unknown index: ", index)
   }
 
@@ -50,7 +67,19 @@
 detect_snow <- function(
     x,
     index = "ndsi",
-    bands = list(green = 2, swir = 4, red = 1, blue = 3),
+    bands = list(
+      aerosol=1,
+      blue=2,
+      green=3,
+      red=4,
+      red_edge1=5,
+      red_edge2=6,
+      red_edge3=7,
+      nir=8,
+      narrow_nir=9,
+      swir1=10,
+      swir2=11
+    ),
     threshold = NULL
 ) {
 
