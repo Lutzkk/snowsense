@@ -9,7 +9,7 @@
   } else if (index == "rgb_brightness") {
     out <- (x[[bands$red]] + x[[bands$green]] + x[[bands$blue]]) / 3
 
-  } else if (index == "WSI") {
+  } else if (index == "wsi") {
 
     #TODO: finish wsi index (doi: 10.1007/s00703-020-00749-y)
 
@@ -19,14 +19,39 @@
     Rn <- x[[bands$nir]]
 
 
-    #extract brightness value
-    V <- terra::app(c(Rr, Rg, Rn), fun = max, na.rm = TRUE)
+    # Hue engineering
+    # (hue representing the angle in the feature space dsescribing
+    # which band is dominating relative to the others (NOT RGB BUT RGN SPACE))
 
-    # Hue proxy (normalized)
-    H <- terra::app(c(Rr, Rg, Rn), fun = min, na.rm = TRUE) / V
-  }
+    wsi_fun <- function(v) {
+      Rr <- v[1]; Rg <- v[2]; Rn <- v[3]
 
-  else {
+      #NaN Handling
+      if (is.na(Rr) || is.na(Rg) || is.na(Rn)) return(NA_real_)
+
+      Cmax <- max(Rr, Rg, Rn)
+      Cmin <- min(Rr, Rg, Rn)
+      delta <- Cmax - Cmin
+
+      V <- Cmax #brightness value
+
+      if (delta == 0) {
+        H <- 0
+      } else if (Cmax == Rr) {
+        H <- ((Rg - Rn) / delta) %% 6
+      } else if (Cmax == Rg) {
+        H <- ((Rn - Rr) / delta) + 2
+      } else {
+        H <- ((Rr - Rg) / delta) + 4
+      }
+
+      H <- H/6
+
+      (V-H)/(V + H)
+    }
+    out <- terra::app(c(Rr, Rg, Rn), fun = wsi_fun)
+
+  } else {
     stop("Unknown index: ", index)
   }
 
