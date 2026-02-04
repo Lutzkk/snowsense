@@ -150,3 +150,4 @@ detect_snow <- function(
     threshold = threshold
   )
 }
+
