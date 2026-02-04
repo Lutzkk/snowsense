@@ -11,8 +11,6 @@
 
   } else if (index == "wsi") {
 
-    #TODO: finish wsi index (doi: 10.1007/s00703-020-00749-y)
-
     #extract bands
     Rr <- x[[bands$red]]
     Rg <- x[[bands$green]]
@@ -77,17 +75,43 @@
 }
 
 
-#' Detect Snow using Spectral Indices
+#' Detects snow-covered areas from optical imagery using different spectral indices and brightness based approaches.
+#'
+#'@details
+#'\section{NDSI (Normalized Difference Snow Index)}{
+#' The NDSI is a very commonly used spectral index for snow detection. It utilizes the high reflectance of snow in the visible domain (usually green)
+#' and its strong absorption in the shortwave infrared (SWIR) domain. A commonly used threshold is 0.4.}
+#'
+#'\section{RGB Brightness}{
+#' This method identifies snow based on its high brightness in the visible spectrum.
+#' Brightness is computed as the maximum reflectance of the red, green, and blue bands.
+#' While simple and fast, this approach may confuse snow with clouds or other bright
+#' surfaces. Threshold depends on the datatype and range of the input data (OTSU performs bad here).}
+#'
+#'\section{WSI (Water-Resistant Snow Index)}{
+#' DOI: 10.1007/s00703-020-00749-y
+#' WSI is computed from HSV-transformed red, green and nir bands by combining pixel-wise brightness (value) and spectral color (Hue),
+#' enabling robust discrimination of snow-covered areas absed on their high reflectance and low spectral variability relative to water and vegetation}
 #'
 #' @param x SpatRaster - A tif containing multiple bands from a multispectral image
-#' @param index Character - The Index to use (currently supports "ndsi" and "rgb_brightness")
+#' @param index Character - The Index to use (currently supports "ndsi", "wsi" and "rgb_brightness")
 #' @param bands Named list with band indices for green, swir, red, and blue bands
 #' @param threshold Numeric or NULL Threshold value for snow detection. If NULL, Otsu's method is used to determine the threshold.
 #'
-#' @returns A list with three elements: the indexed Tif (SpatRaster), the binary snow mask (SpatRaster), and the threshold value(numeric).
+#' @returns Returns a list with three elements: the indexed Tif (SpatRaster), the binary snow mask (SpatRaster), and the threshold value(numeric).
 #' @export
 #'
-#' @examples detect_snow(x, index="ndsi", bands=list(green=2,swir=4),threshold=NULL)
+#' @examples
+#' # NDSI based snow detection
+#' detect_snow(x, index="ndsi",
+#'             bands=list(green=2,swir=4),threshold=NULL)
+#' # # RGB Brightness based snow detection
+#' detect_snow(x, index="rgb_brightness",
+#'             bands=list(red=3,green=2,blue=1),threshold=NULL)
+#' # WSI based snow detection
+#' detect_snow(x, index="wsi",
+#'             bands=list(red=3,green=2,nir=5),threshold=NULL)
+#'
 #'
 detect_snow <- function(
     x,
