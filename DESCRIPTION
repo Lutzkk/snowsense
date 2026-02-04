@@ -4,9 +4,9 @@ Version: 0.0.0.9000
 Authors@R:
     person(
       given = "Lutz",
-      family = "K.",
+      family = "K",
       role = c("aut", "cre"),
-      email = "your_email@example.com"
+      email = "Lutz_Kleemann@proton.me"
     )
 Description: Provides tools for analysing snow from remote sensing data
 License: MIT + file LICENSE
