@@ -28,7 +28,7 @@
   snow_targets[snow_targets == 0] <- NA
 
   # distance to nearest snow pixel
-  d <- terra::distance(snow_targets)
+  d <- terra::distance(snow_targets, target=1) #1 is snow pixel
 
   # remove snow pixels that are too isolated
   x[d > max_distance] <- 0

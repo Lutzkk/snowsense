@@ -141,7 +141,7 @@ detect_snow <- function(
   }
 
   #Binarize
-  snow <- idx > threshold
+  snow <- terra::ifel(idx > threshold, 1, 0)
 
   #Return
   list(
