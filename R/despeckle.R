@@ -19,19 +19,6 @@
   )
 }
 
-.despeckle_distance <- function(x, max_distance) {
-
-  stopifnot(inherits(x, "SpatRaster"))
-
-  # keep only snow pixels as targets
-  snow_targets <- x
-  snow_targets[snow_targets == 0] <- NA
-
-  # distance to nearest snow pixel
-  d <- terra::distance(snow_targets)
-  d
-}
-
 .despeckle_min_area <- function(x, min_pixels){
   stopifnot(inherits(x, "SpatRaster"))
 
@@ -60,7 +47,6 @@
 #' @param x SpatRaster - Binary snow mask (1 == snow, 0 == no snow)
 #' @param window Integer - Odd-Sized neighborhood window for majority filtering
 #' @param threshold  Integer or NULL - Neighborhood threshold.  If NULL, strict majority is used.
-#' @param max_distance Integer - Maximum allowed distance to other snow pixles (map units )
 #' @param min_pixels Integer - Minimum numbers of connected pixels required for snow patch to be retained.
 #'
 #' @returns SpatRaster - Despeckled binary snow mask
@@ -80,17 +66,10 @@
 #'min_pixels=10
 #')
 #'
-#'#Remove spatially isolated snow pixels
-#'snow_clean <- despeckle_snow(
-#'x,
-#'window=3,
-#'max_distance=40
-#')
 despeckle_snow <- function(
     x,
     window = NULL,
     threshold = NULL,
-    max_distance = NULL,
     min_pixels = NULL
 ) {
 
@@ -104,16 +83,7 @@ despeckle_snow <- function(
       threshold = threshold
     )
   }
-
-  # 2. Distance-based cleanup
-  if (!is.null(max_distance)) {
-    x <- .despeckle_distance(
-      x,
-      max_distance = max_distance
-    )
-  }
-
-  # 3. Object-size cleanup
+  # 2. Object-size cleanup
   if (!is.null(min_pixels)) {
     x <- .despeckle_min_area(
       x,

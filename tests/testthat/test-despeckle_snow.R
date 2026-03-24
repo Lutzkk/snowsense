@@ -15,7 +15,6 @@ test_that("despeckle_snow works on example binary raster", {
   out <- despeckle_snow(
     r,
     window = 3,
-    max_distance=2,
     min_pixels = 5
   )
 
