@@ -2,15 +2,9 @@
 % Please edit documentation in R/despeckle.R
 \name{despeckle_snow}
 \alias{despeckle_snow}
-\title{Despeckles snow patches based on a binary snow mask (1==snow, 0==no snow)}
+\title{Despeckles snow patches based on a binary snow mask (1 == snow, 0 == no snow)}
 \usage{
-despeckle_snow(
-  x,
-  window = 3,
-  threshold = NULL,
-  max_distance = NULL,
-  min_pixels = NULL
-)
+despeckle_snow(x, window = NULL, threshold = NULL, min_pixels = NULL)
 }
 \arguments{
 \item{x}{SpatRaster - Binary snow mask (1 == snow, 0 == no snow)}
@@ -19,15 +13,13 @@ despeckle_snow(
 
 \item{threshold}{Integer or NULL - Neighborhood threshold.  If NULL, strict majority is used.}
 
-\item{max_distance}{Integer - Maximum allowed distance to other snow pixles (map units)}
-
 \item{min_pixels}{Integer - Minimum numbers of connected pixels required for snow patch to be retained.}
 }
 \value{
 SpatRaster - Despeckled binary snow mask
 }
 \description{
-Despeckles snow patches based on a binary snow mask (1==snow, 0==no snow)
+Despeckles snow patches based on a binary snow mask (1 == snow, 0 == no snow)
 }
 \examples{
 #Basic majority-based despeckling
@@ -43,10 +35,4 @@ window=3,
 min_pixels=10
 )
 
-#Remove spatially isolated snow pixels
-snow_clean <- despeckle_snow(
-x,
-window=3,
-max_distance=40
-)
 }

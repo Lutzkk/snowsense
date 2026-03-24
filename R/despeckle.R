@@ -41,7 +41,7 @@
 
 
 
-#' Despeckles snow patches based on a binary snow mask (1==snow, 0==no snow)
+#' Despeckles snow patches based on a binary snow mask (1 == snow, 0 == no snow)
 #'
 #'
 #' @param x SpatRaster - Binary snow mask (1 == snow, 0 == no snow)
