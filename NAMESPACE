@@ -3,3 +3,4 @@
 export(aggregate_snow)
 export(despeckle_snow)
 export(detect_snow)
+export(snow_cover_fraction)

@@ -28,20 +28,23 @@ Returns a list with three elements: the indexed Tif (SpatRaster), the binary sno
 Detects snow-covered areas from optical imagery using different spectral indices and brightness based approaches.
 }
 \details{
-\section{NDSI (Normalized Difference Snow Index)}{
-The NDSI is a very commonly used spectral index for snow detection. It utilizes the high reflectance of snow in the visible domain (usually green)
-and its strong absorption in the shortwave infrared (SWIR) domain. A commonly used threshold is 0.4.}
+\strong{NDSI (Normalized Difference Snow Index)}\cr
+The NDSI is a very commonly used spectral index for snow detection. It utilizes the high
+reflectance of snow in the visible domain (usually green) and its strong absorption in the
+shortwave infrared (SWIR) domain. A commonly used threshold is 0.4.
 
-\section{RGB Brightness}{
+\strong{RGB Brightness}\cr
 This method identifies snow based on its high brightness in the visible spectrum.
-Brightness is computed as the maximum reflectance of the red, green, and blue bands.
+Brightness is computed as the mean reflectance of the red, green, and blue bands.
 While simple and fast, this approach may confuse snow with clouds or other bright
-surfaces. Threshold depends on the datatype and range of the input data (OTSU performs bad here).}
+surfaces. Threshold depends on the datatype and range of the input data (Otsu performs
+badly here).
 
-\section{WSI (Water-Resistant Snow Index)}{
-DOI: 10.1007/s00703-020-00749-y
-WSI is computed from HSV-transformed red, green and nir bands by combining pixel-wise brightness (value) and spectral color (Hue),
-enabling robust discrimination of snow-covered areas absed on their high reflectance and low spectral variability relative to water and vegetation}
+\strong{WSI (Water-Resistant Snow Index)}\cr
+WSI is computed from HSV-transformed red, green and nir bands by combining pixel-wise
+brightness (value) and spectral color (hue), enabling robust discrimination of snow-covered
+areas based on their high reflectance and low spectral variability relative to water and
+vegetation. doi: 10.1007/s00703-020-00749-y
 }
 \examples{
 # NDSI based snow detection
