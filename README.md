@@ -20,12 +20,13 @@ A list with:
 1) The index raster
 2) The binary snow mask 
 3) The Threshold value 
-
+<details>
+<summary>Methods</summary>
 **Methods:**
 _ndsi:_ 
-The Normalized Difference Snow Index (NDSI) exploits teh high reflectance of snow in the visible spectrum and its strong absorption in the shortwave infrared (SWIR)
+The Normalized Difference Snow Index (NDSI) exploits the high reflectance of snow in the visible spectrum and its strong absorption in the shortwave infrared (SWIR)
   `NDSI = (R_green - R_SWIR) / (R_green + R_SWIR)`
-  A commonly used threshold is 0.4 > )
+  A commonly used threshold is 0.4
 
 _rgb_brightness:_
 Identifies snow based on its high brightness across the visible spectrum. Simple and fast
@@ -37,6 +38,6 @@ The Water-resistant Snow Index (WSI) combines brightness and hue in RGN (Red-Gre
 `WSI = (V - H) / (V + H)` 
 where V is pixel brightness (max of R,G, NIR) and H is the hue angle in RGN space
 (Donmez et al., 2021)
-
+</details>
 
 
