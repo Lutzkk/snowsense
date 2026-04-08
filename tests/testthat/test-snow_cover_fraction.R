@@ -3,8 +3,8 @@ test_that("snow_cover_fraction works for both methods", {
   tif <- system.file("extdata", "example_s2_20m.tif", package= "snowsense")
   x <- terra::rast(tif)
 
-  scf_sal <- snow_cover_fraction(x, bands=list(green=3, swir=10), method="salomonson")
-  scf_sig <- snow_cover_fraction(x, bands=list(green=3, swir=10), method="sigmoid")
+  scf_sal <- snow_cover_fraction(x, bands=list(green=3, swir=11), method="salomonson")
+  scf_sig <- snow_cover_fraction(x, bands=list(green=3, swir=11), method="sigmoid")
 
 
   #output type
@@ -25,5 +25,5 @@ test_that("snow_cover_fraction works for both methods", {
   expect_false(isTRUE(all.equal(terra::values(scf_sal), terra::values(scf_sig))))
 
   #invalid methods throws error.
-  expect_error(snow_cover_fraction(x, bands=list(green=3, swir=10), method="some random method that does not exist"))
+  expect_error(snow_cover_fraction(x, bands=list(green=3, swir=11), method="some random method that does not exist"))
 })

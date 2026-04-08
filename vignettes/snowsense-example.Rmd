@@ -1,0 +1,105 @@
+---
+title: "Snow Detection and Fractional Snow Cover with snowsense"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Snow Detection and Fractional Snow Cover with snowsense}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r}
+
+```
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(terra)
+library(tidyterra)
+library(ggplot2)
+library(snowsense)
+library(patchwork)
+```
+
+## This vignette demonstrates a full snow analysis workflow using a Sentinel-2 L1C scene (Stacked to a single tif, resampled to 20m) from the Austrian Alps (June 2023). 
+
+The workflow includes:
+1. Data Loading
+2. Snow Detection using different indices
+3. Despeckling 
+4. Fractional Snow Cover Estimation using two different regression approaches
+
+
+
+```{r}
+# Load Packages 
+library(snowsense)
+
+ds <- rast("../inst/extdata/example_s2_20m.tif") #load sentinel2 data as SpatRaster with terra
+
+print(paste("Bands available:", paste(names(ds), collapse = ", ")))
+
+plotRGB(ds, r="B04", g="B03", b="B02", stretch="lin", main="Sentinel-2 L1C RGB Scene (20m, Stacked)") #lin2
+
+```
+## Snow Detection 
+`snowsense` supports three spectral indices for snow detection. We apply all three to the same scene for comparison. To understand the how the indices work, its best to consult the README and the original papers.
+
+```{r ndsi, fig.width=10, fig.height=5}
+result_ndsi <- detect_snow(ds, index = "ndsi",
+                             bands = list(green = "B03", swir = "B11"),
+                             threshold = 0.4)
+
+# Note that if no threshold is set, the function falls back to Otsu's method. An unsupervised
+# approach that selects an optimal threshold for separating bimodal grayscale data into two classes
+result_ndsi_otsu <- detect_snow(ds, index = "ndsi",
+                                bands = list(green = "B03", swir = "B11"),
+                                threshold = NULL)
+```
+```{r, ndsi_plot, echo=FALSE, fig.width=10, fig.height=8}
+# Prepare snow masks (0 -> NA for transparency)
+mask_thresh <- result_ndsi$binary_mask
+mask_thresh[mask_thresh == 0] <- NA
+mask_thresh <- as.factor(mask_thresh)
+
+mask_otsu <- result_ndsi_otsu$binary_mask
+mask_otsu[mask_otsu == 0] <- NA
+mask_otsu <- as.factor(mask_otsu)
+
+rgb_layer <- geom_spatraster_rgb(data = ds, r = 4, g = 3, b = 2, stretch = "lin")
+
+p1 <- ggplot() + rgb_layer +
+  labs(title = "RGB") + theme_minimal()
+
+p2 <- ggplot() + geom_spatraster(data = result_ndsi$index) +
+  scale_fill_viridis_c(name = "NDSI", na.value = NA) +
+  labs(title = "NDSI Values") + theme_minimal()
+
+p3 <- ggplot() + rgb_layer +
+  geom_spatraster(data = mask_thresh) +
+  scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
+  labs(title = "Snow Mask (threshold = 0.4)") + theme_minimal()
+
+p4 <- ggplot() + rgb_layer +
+  geom_spatraster(data = mask_otsu) +
+  scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
+  labs(title = paste0("Snow Mask (Otsu = ", round(result_ndsi_otsu$threshold, 2), ")")) +
+  theme_minimal()
+# 
+(p1 | p2) / (p3 | p4)
+
+```
+```{r}
+library(terra)
+x <- rast("../inst/extdata/example_s2_20m.tif")
+x <- x / 10000
+writeRaster(x, "../inst/extdata/example_s2_20m.tif", overwrite = TRUE)
+```
+
+
+#Plot 
+The second plot showcases that although Otsus method can work, it does not produce as precise results as
