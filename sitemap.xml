@@ -1,0 +1,16 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/snowsense-example.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/aggregate_snow.html</loc></url>
+<url><loc>/reference/despeckle_snow.html</loc></url>
+<url><loc>/reference/detect_snow.html</loc></url>
+<url><loc>/reference/example_s2_20m.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/snow_cover_fraction.html</loc></url>
+</urlset>
+
