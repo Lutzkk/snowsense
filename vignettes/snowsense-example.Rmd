@@ -6,9 +6,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-```{r}
-
-```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -29,7 +26,7 @@ library(patchwork)
 
 The workflow includes:
 1. Data Loading
-2. Snow Detection using different indices
+2. Snow Detection 
 3. Despeckling 
 4. Fractional Snow Cover Estimation using two different regression approaches
 
@@ -40,6 +37,7 @@ The workflow includes:
 library(snowsense)
 
 ds <- rast("../inst/extdata/example_s2_20m.tif") #load sentinel2 data as SpatRaster with terra
+ds <- ds/10000 #scale to reflectance values (0-1)
 
 print(paste("Bands available:", paste(names(ds), collapse = ", ")))
 
@@ -60,6 +58,8 @@ result_ndsi_otsu <- detect_snow(ds, index = "ndsi",
                                 bands = list(green = "B03", swir = "B11"),
                                 threshold = NULL)
 ```
+
+
 ```{r, ndsi_plot, echo=FALSE, fig.width=10, fig.height=8}
 # Prepare snow masks (0 -> NA for transparency)
 mask_thresh <- result_ndsi$binary_mask
@@ -70,36 +70,99 @@ mask_otsu <- result_ndsi_otsu$binary_mask
 mask_otsu[mask_otsu == 0] <- NA
 mask_otsu <- as.factor(mask_otsu)
 
+no_axes <- theme(axis.text = element_blank(), axis.ticks = element_blank(),
+                 plot.margin = margin(2, 2, 2, 2))
+
 rgb_layer <- geom_spatraster_rgb(data = ds, r = 4, g = 3, b = 2, stretch = "lin")
 
-p1 <- ggplot() + rgb_layer +
-  labs(title = "RGB") + theme_minimal()
+p1 <- ggplot() + rgb_layer + theme_minimal() + no_axes +
+  labs(title = "RGB")
 
 p2 <- ggplot() + geom_spatraster(data = result_ndsi$index) +
   scale_fill_viridis_c(name = "NDSI", na.value = NA) +
-  labs(title = "NDSI Values") + theme_minimal()
+  theme_minimal() + no_axes +
+  labs(title = "NDSI Values")
 
 p3 <- ggplot() + rgb_layer +
   geom_spatraster(data = mask_thresh) +
   scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
-  labs(title = "Snow Mask (threshold = 0.4)") + theme_minimal()
+  theme_minimal() + no_axes +
+  labs(title = "Snow Mask (threshold = 0.4)")
 
 p4 <- ggplot() + rgb_layer +
   geom_spatraster(data = mask_otsu) +
   scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
-  labs(title = paste0("Snow Mask (Otsu = ", round(result_ndsi_otsu$threshold, 2), ")")) +
-  theme_minimal()
-# 
-(p1 | p2) / (p3 | p4)
+  theme_minimal() + no_axes +
+  labs(title = paste0("Snow Mask (Otsu = ", round(result_ndsi_otsu$threshold, 2), ")"))
 
+(p1 | p2) / (p3 | p4) 
 ```
-```{r}
-library(terra)
-x <- rast("../inst/extdata/example_s2_20m.tif")
-x <- x / 10000
-writeRaster(x, "../inst/extdata/example_s2_20m.tif", overwrite = TRUE)
+The bottom right plot depicts the snow mask derived from using Otsu's method for thresholding. The automatically selected lower threshold here works better, capturing more snow pixels and reducing false negatives from the fixed threshold (from a visual inspection). However, with a fixed threshold you have full control and reproducibility across scenes. RGB_brightness is especially useful for high resolution drone data, where only RGB is available.
+wsi is based on a paper from Donmez et al. (2021) and is especially good at discriminating between water and snow.
+
+## Despeckling
+
+Snow masks often contain speckle noise (isolated snow classified pixels that may be noise or small patches that can be caused by misclassification). `despeckle_snow()` removes these using majority filtering and/or a minimum patch size filter.
+
+```{r despeckle}
+clean <- despeckle_snow(result_ndsi_otsu$binary_mask, window=9, min_pixels=5)
+```
+
+```{r, despeckle_plot, echo=FALSE, fig.width=10, fig.height=4}
+mask_clean <- clean
+mask_clean[mask_clean == 0] <- NA
+mask_clean <- as.factor(mask_clean)
+
+p_before <- ggplot() + rgb_layer +
+  geom_spatraster(data = mask_otsu) +
+  scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
+  theme_minimal() + no_axes +
+  labs(title = "Before Despeckling")
+
+p_after <- ggplot() + rgb_layer +
+  geom_spatraster(data = mask_clean) +
+  scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
+  theme_minimal() + no_axes +
+  labs(title = "After Despeckling (window=9, min_pixels=5)")
+
+p_before | p_after
+```
+The despeckling function removes small isolated snow pixels that are likely false positives. The parameters `window` and `min_pixels` control the size of the neighborhood (majority based filtering) and the minimum number of connected pixels required to retain a snow patch (size based filtering).
+The plot shows that after despeckling a lot of tiny blue dots have been removed indicating it is an effective way to clean up the snow mask from tiny small positives. However, it also removes some small snow patches that may be real, so there is a tradeoff between removing noise and losing small features.
+
+## Fractional Snow Cover Estimation
+
+Rather than a binary snow mask, `snow_cover_fraction()` estimates the fraction of snow cover per pixel directly using NDSI-based regression. This is useful when sub-pixel snow cover information is needed, for example at coarser resolutions.
+
+Two regression approaches are currently supported in the package:
+- **Salomonson & Appel (2004)**: FSC = 1.45 * NDSI - 0.45
+- **Gascoin et al. (2020)**: FSC = 0.5 *  tanh(2.65 * NDSI - 1.42) + 0.5
+
+```{r, fsc}
+fsc_sal <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"), method = "salomonson")
+fsc_sig <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"), method = "sigmoid")
+```
+
+```{r, fsc_plot, echo=FALSE, fig.width=10, fig.height=4}
+fsc_sal_overlay <- fsc_sal
+fsc_sal_overlay[fsc_sal_overlay < 0.1] <- NA
+
+fsc_sig_overlay <- fsc_sig
+fsc_sig_overlay[fsc_sig_overlay < 0.1] <- NA
+
+p_sal <- ggplot() + rgb_layer +
+  geom_spatraster(data = fsc_sal_overlay) +
+  scale_fill_viridis_c(name = "FSC", limits = c(0.1, 1), na.value = NA) +
+  theme_minimal() + no_axes +
+  labs(title = "FSC (Salomonson & Appel, 2004)")
+
+p_sig <- ggplot() + rgb_layer +
+  geom_spatraster(data = fsc_sig_overlay) +
+  scale_fill_viridis_c(name = "FSC", limits = c(0.1, 1), na.value = NA) +
+  theme_minimal() + no_axes +
+  labs(title = "FSC (Gascoin et al., 2020)")
+
+p_sal | p_sig
 ```
 
 
-#Plot 
-The second plot showcases that although Otsus method can work, it does not produce as precise results as
