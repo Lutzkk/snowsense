@@ -1,7 +1,9 @@
 # Snowsense
 
-An R package for snow detection and fractional snow cover estimation
-from satellite imagery
+An R package aimed to facilitate snow detection and fractional snow
+cover estimation from satellite imagery. For further details please
+refer to the [package
+website](https://lutzkk.github.io/snowsense/articles/snowsense-example.html).
 
 ## Installation
 
@@ -15,7 +17,7 @@ devtools::install_github("Lutzkk/snowsense")
 ### `detect_snow(x, index, bands, threshold)`
 
 Detects snow covered pixels from RGB or multispectral imagery using
-spectral indices.
+different spectral indices.
 
 Parameters
 

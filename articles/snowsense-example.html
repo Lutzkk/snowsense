@@ -63,6 +63,15 @@
 
     
     
+<p>This vignette demonstrates a full snow analysis workflow using a
+Sentinel-2 L1C scene (Stacked to a single tif, resampled to 20m) from
+the Austrian Alps (June 2023). The corresponding Github Repository can
+be found <a href="https://github.com/Lutzkk/snowsense" class="external-link">here</a>, which
+also contains the dataset shown here. The code for the plots is left out
+in this vignette.</p>
+<p>The workflow includes: 1. Data Loading 2. Snow Detection 3.
+Despeckling 4. Fractional Snow Cover Estimation using two different
+regression approaches</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; terra 1.9.11</span></span>
@@ -81,33 +90,35 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     area</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="this-vignette-demonstrates-a-full-snow-analysis-workflow-using-a-sentinel-2-l1c-scene-stacked-to-a-single-tif-resampled-to-20m-from-the-austrian-alps-june-2023-">This vignette demonstrates a full snow analysis workflow using a
-Sentinel-2 L1C scene (Stacked to a single tif, resampled to 20m) from
-the Austrian Alps (June 2023).<a class="anchor" aria-label="anchor" href="#this-vignette-demonstrates-a-full-snow-analysis-workflow-using-a-sentinel-2-l1c-scene-stacked-to-a-single-tif-resampled-to-20m-from-the-austrian-alps-june-2023-"></a>
+<h2 id="data-loading">Data Loading<a class="anchor" aria-label="anchor" href="#data-loading"></a>
 </h2>
-<p>The workflow includes: 1. Data Loading 2. Snow Detection 3.
-Despeckling 4. Fractional Snow Cover Estimation using two different
-regression approaches</p>
+<p>The example dataset is a clipped Sentinel-2 L1C scene (dtype:
+<strong>uint16</strong>, bands: <strong>B01 - B12</strong>) which has
+been stacked to a single multi-band GeoTIFF and resampled to 20m
+resolution.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load Packages </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">snowsense</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"../inst/extdata/example_s2_20m.tif"</span><span class="op">)</span> <span class="co">#load sentinel2 data as SpatRaster with terra</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">/</span><span class="fl">10000</span> <span class="co">#scale to reflectance values (0-1)</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="va">ds</span> <span class="op">/</span> <span class="fl">10000</span> <span class="co">#scale to reflectance values (0-1)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Bands available:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Bands available: B01, B02, B03, B04, B05, B06, B07, B08, B8A, B09, B10, B11, B12"</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">ds</span>, r<span class="op">=</span><span class="st">"B04"</span>, g<span class="op">=</span><span class="st">"B03"</span>, b<span class="op">=</span><span class="st">"B02"</span>, stretch<span class="op">=</span><span class="st">"lin"</span>, main<span class="op">=</span><span class="st">"Sentinel-2 L1C RGB Scene (20m, Stacked)"</span><span class="op">)</span> <span class="co">#lin2</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">ds</span>, r<span class="op">=</span><span class="st">"B04"</span>, g<span class="op">=</span><span class="st">"B03"</span>, b<span class="op">=</span><span class="st">"B02"</span>, stretch<span class="op">=</span><span class="st">"lin"</span>, main<span class="op">=</span><span class="st">"Sentinel-2 L1C RGB Scene (20m, Stacked)"</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="snowsense-example_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700">
 ## Snow Detection <code>snowsense</code> supports three spectral indices
-for snow detection. We apply all three to the same scene for comparison.
-To understand the how the indices work, its best to consult the README
-and the original papers.</p>
+for snow detection (<strong>NDSI</strong>,
+<strong>RGB_brightness</strong>, and <strong><a href="https://doi.org/10.1007/s00703-020-00749-y" class="external-link">WSI</a></strong>).
+NDSI is demonstrated here as it suits the Sentinel-2 data best. An
+approach with a fixed threshold (0.4) and an unsupervised approach using
+<a href="https://doi.org/10.1109/TSMC.1979.4310076" class="external-link">Otsu’s method</a>
+are shown for comparison.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result_ndsi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detect_snow.html">detect_snow</a></span><span class="op">(</span><span class="va">ds</span>, index <span class="op">=</span> <span class="st">"ndsi"</span>,</span>
-<span>                             bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="st">"B03"</span>, swir <span class="op">=</span> <span class="st">"B11"</span><span class="op">)</span>,</span>
-<span>                             threshold <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span>                           bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="st">"B03"</span>, swir <span class="op">=</span> <span class="st">"B11"</span><span class="op">)</span>,</span>
+<span>                           threshold <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Note that if no threshold is set, the function falls back to Otsu's method. An unsupervised</span></span>
 <span><span class="co"># approach that selects an optimal threshold for separating bimodal grayscale data into two classes</span></span>
@@ -126,7 +137,7 @@ works better, capturing more snow pixels and reducing false negatives
 from the fixed threshold (from a visual inspection). However, with a
 fixed threshold you have full control and reproducibility across scenes.
 RGB_brightness is especially useful for high resolution drone data,
-where only RGB is available. wsi is based on a paper from Donmez et
+where only RGB is available. WSI is based on a paper from Donmez et
 al. (2021) and is especially good at discriminating between water and
 snow.</p>
 </div>
@@ -147,11 +158,10 @@ likely false positives. The parameters <code>window</code> and
 <code>min_pixels</code> control the size of the neighborhood (majority
 based filtering) and the minimum number of connected pixels required to
 retain a snow patch (size based filtering). The plot shows that after
-despeckling a lot of tiny blue dots have been removed indicating it is
-an effective way to clean up the snow mask from tiny small positives.
-However, it also removes some small snow patches that may be real, so
-there is a tradeoff between removing noise and losing small
-features.</p>
+despeckling a lot of tiny blue dots have been removed, indicating it is
+an effective way to clean up the snow mask from tiny positives. However,
+it also removes some small snow patches that may be real, so there is a
+tradeoff between removing noise and losing small features.</p>
 </div>
 <div class="section level2">
 <h2 id="fractional-snow-cover-estimation">Fractional Snow Cover Estimation<a class="anchor" aria-label="anchor" href="#fractional-snow-cover-estimation"></a>
@@ -161,9 +171,9 @@ estimates the fraction of snow cover per pixel directly using NDSI-based
 regression. This is useful when sub-pixel snow cover information is
 needed, for example at coarser resolutions.</p>
 <p>Two regression approaches are currently supported in the package: -
-<strong>Salomonson &amp; Appel (2004)</strong>: FSC = 1.45 * NDSI - 0.45
-- <strong>Gascoin et al. (2020)</strong>: FSC = 0.5 * tanh(2.65 * NDSI -
-1.42) + 0.5</p>
+<strong><a href="https://doi.org/10.1016/j.rse.2003.10.016" class="external-link">Salomonson
+&amp; Appel (2004)</a></strong>: FSC = 1.45 * NDSI - 0.45 - <strong><a href="https://doi.org/10.3390/rs12182904" class="external-link">Gascoin et
+al. (2020)</a></strong>: FSC = 0.5 * tanh(2.65 * NDSI - 1.42) + 0.5</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fsc_sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/snow_cover_fraction.html">snow_cover_fraction</a></span><span class="op">(</span><span class="va">ds</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="st">"B03"</span>, swir <span class="op">=</span> <span class="st">"B11"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"salomonson"</span><span class="op">)</span></span>
 <span><span class="va">fsc_sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/snow_cover_fraction.html">snow_cover_fraction</a></span><span class="op">(</span><span class="va">ds</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="st">"B03"</span>, swir <span class="op">=</span> <span class="st">"B11"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"sigmoid"</span><span class="op">)</span></span></code></pre></div>
