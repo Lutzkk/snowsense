@@ -7,9 +7,13 @@ be found [here](https://github.com/Lutzkk/snowsense), which also
 contains the dataset shown here. The code for the plots is left out in
 this vignette.
 
-The workflow includes: 1. Data Loading 2. Snow Detection 3. Despeckling
-4. Fractional Snow Cover Estimation using two different regression
-approaches
+The workflow includes:
+
+1.  Data Loading
+2.  Snow Detection
+3.  Despeckling
+4.  Fractional Snow Cover Estimation using two different regression
+    approaches
 
 ``` r
 library(terra)
@@ -49,8 +53,11 @@ print(paste("Bands available:", paste(names(ds), collapse = ", ")))
 plotRGB(ds, r="B04", g="B03", b="B02", stretch="lin", main="Sentinel-2 L1C RGB Scene (20m, Stacked)") 
 ```
 
-![](snowsense-example_files/figure-html/unnamed-chunk-2-1.png) \## Snow
-Detection `snowsense` supports three spectral indices for snow detection
+![](snowsense-example_files/figure-html/unnamed-chunk-2-1.png)
+
+## Snow Detection
+
+`snowsense` supports three spectral indices for snow detection
 (**NDSI**, **RGB_brightness**, and
 **[WSI](https://doi.org/10.1007/s00703-020-00749-y)**). NDSI is
 demonstrated here as it suits the Sentinel-2 data best. An approach with
