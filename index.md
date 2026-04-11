@@ -23,7 +23,7 @@ Parameters
 
 - `x` – SpatRaster containing the image
 - `index` – `"ndsi"`, `"wsi"` or `"rgb_brightness"`
-- `bands` – named list of band indices (e.g. `list(green=3, swir=11)`) –
+- `bands` – named list of band indices (e.g. `list(green=3, swir=12)`) –
   required bands depend on the chosen index
 - `threshold` – numeric threshold for binary snow/no-snow
   classification; if `NULL`, Otsu’s method (Otsu, 1979) is applied
@@ -62,7 +62,7 @@ Example
 tif <- system.file("extdata", "example_s2_20m.tif", package = "snowsense")
 x <- terra::rast(tif)
 
-result <- detect_snow(x, index = "ndsi", bands = list(green = 3, swir = 10))
+result <- detect_snow(x, index = "ndsi", bands = list(green = 3, swir = 12))
 
 result$index        # index raster
 result$binary_mask  # binary snow mask
@@ -162,7 +162,7 @@ Example
 tif <- system.file("extdata", "example_s2_20m.tif", package = "snowsense")
 x <- terra::rast(tif)
 
-scf <- snow_cover_fraction(x, bands = list(green = 3, swir = 10), method = "salomonson")
+scf <- snow_cover_fraction(x, bands = list(green = 3, swir = 12), method = "salomonson")
 ```
 
 ## References

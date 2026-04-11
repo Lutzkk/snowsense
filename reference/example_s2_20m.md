@@ -1,51 +1,59 @@
 # Example Sentinel-2 RGB+SWIR raster (20 m)
 
 A small Sentinel-2 GeoTIFF included with the snowsense package for
-demonstrations and testing. The raster contains four bands:
+demonstrations and testing. The raster contains 13 bands:
 
-- Band 1:
+- Band 1 (B01):
 
-  Coastal Aerosol (Sentinel-2 band 1)
+  Coastal Aerosol
 
-- Band 2:
+- Band 2 (B02):
 
-  Blue (Sentinel-2 band 2)
+  Blue
 
-- Band 3:
+- Band 3 (B03):
 
-  Green (Sentinel-2 band 3)
+  Green
 
-- Band 4:
+- Band 4 (B04):
 
-  Red (Sentinel-2 band 4)
+  Red
 
-- Band 5:
+- Band 5 (B05):
 
-  Red Edge 1 (Sentinel-2 band 5)
+  Red Edge 1
 
-- Band 6:
+- Band 6 (B06):
 
-  Red Edge 2 (Sentinel-2 band 6)
+  Red Edge 2
 
-- Band 7:
+- Band 7 (B07):
 
-  Red Edge 3 (Sentinel-2 band 7)
+  Red Edge 3
 
-- Band 8:
+- Band 8 (B08):
 
-  NIR (Sentinel-2 band 8)
+  NIR
 
-- Band 9:
+- Band 9 (B8A):
 
-  Narrow NIR (Sentinel-2 band 8A)
+  Narrow NIR
 
-- Band 10:
+- Band 10 (B09):
 
-  SWIR 1 (Sentinel-2 band 11)
+  Water Vapour
 
-- Band 11:
+- Band 11 (B10):
 
-  SWIR 2 (Sentinel-2 band 12)
+  Cirrus
+
+- Band 12 (B11):
+
+  SWIR 1
+
+- Band 13 (B12):
+
+  SWIR 2
 
 ## Details
 
@@ -53,4 +61,4 @@ The raster is located at the Zugspitzplatt in UTM zone 32N (EPSG:32632).
 
 The file can be accessed with:
 
-    system.file("extdata", "example_s2_rgb_swir_20m.tif", package = "snowsense")
+    system.file("extdata", "example_s2_20m.tif", package = "snowsense")

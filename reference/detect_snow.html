@@ -45,7 +45,8 @@
 <span>  <span class="va">x</span>,</span>
 <span>  index <span class="op">=</span> <span class="st">"ndsi"</span>,</span>
 <span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>aerosol <span class="op">=</span> <span class="fl">1</span>, blue <span class="op">=</span> <span class="fl">2</span>, green <span class="op">=</span> <span class="fl">3</span>, red <span class="op">=</span> <span class="fl">4</span>, red_edge1 <span class="op">=</span> <span class="fl">5</span>, red_edge2 <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>    red_edge3 <span class="op">=</span> <span class="fl">7</span>, nir <span class="op">=</span> <span class="fl">8</span>, narrow_nir <span class="op">=</span> <span class="fl">9</span>, swir1 <span class="op">=</span> <span class="fl">10</span>, swir2 <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>,</span>
+<span>    red_edge3 <span class="op">=</span> <span class="fl">7</span>, nir <span class="op">=</span> <span class="fl">8</span>, narrow_nir <span class="op">=</span> <span class="fl">9</span>, water_vapor <span class="op">=</span> <span class="fl">10</span>, cirrus <span class="op">=</span> <span class="fl">11</span>, swir1 <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    swir2 <span class="op">=</span> <span class="fl">13</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,7 +91,7 @@ badly here).</p>
 WSI is computed from HSV-transformed red, green and nir bands by combining pixel-wise
 brightness (value) and spectral color (hue), enabling robust discrimination of snow-covered
 areas based on their high reflectance and low spectral variability relative to water and
-vegetation. doi: 10.1007/s00703-020-00749-y</p>
+vegetation. doi:10.1007/s00703-020-00749-y</p>
     </div>
 
     <div class="section level2">

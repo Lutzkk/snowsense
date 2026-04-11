@@ -30,6 +30,6 @@ Spatraster with Snow Cover Fraction values (clipped to 0-1)
 ## Examples
 
 ``` r
-scf <- snow_cover_fraction(x, bands=list(green=3, swir=10), method="salomonson")
+scf <- snow_cover_fraction(x, bands=list(green=3, swir=12), method="salomonson")
 #> Error: object 'x' not found
 ```

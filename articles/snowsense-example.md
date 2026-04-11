@@ -103,7 +103,8 @@ removes these using majority filtering and/or a minimum patch size
 filter.
 
 ``` r
-clean <- despeckle_snow(result_ndsi_otsu$binary_mask, window=9, min_pixels=5)
+clean <- despeckle_snow(result_ndsi_otsu$binary_mask,
+                        window=9, min_pixels=5)
 ```
 
     #> <SpatRaster> resampled to 500364 cells.
@@ -136,8 +137,12 @@ al. (2020)](https://doi.org/10.3390/rs12182904)**: FSC = 0.5 \*
 tanh(2.65 \* NDSI - 1.42) + 0.5
 
 ``` r
-fsc_sal <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"), method = "salomonson")
-fsc_sig <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"), method = "sigmoid")
+#salomonson
+fsc_sal <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"),
+                               method = "salomonson")
+#gascoin
+fsc_sig <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"),
+                               method = "sigmoid")
 ```
 
     #> <SpatRaster> resampled to 500364 cells.

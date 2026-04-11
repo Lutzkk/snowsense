@@ -78,7 +78,7 @@ Parameters
 <code>index</code> – <code>"ndsi"</code>, <code>"wsi"</code> or <code>"rgb_brightness"</code>
 </li>
 <li>
-<code>bands</code> – named list of band indices (e.g. <code>list(green=3, swir=11)</code>) – required bands depend on the chosen index</li>
+<code>bands</code> – named list of band indices (e.g. <code>list(green=3, swir=12)</code>) – required bands depend on the chosen index</li>
 <li>
 <code>threshold</code> – numeric threshold for binary snow/no-snow classification; if <code>NULL</code>, Otsu’s method (Otsu, 1979) is applied automatically. It determines the optimal threshold by maximizing the variance between snow and non-snow pixel classes.</li>
 </ul></details><details><summary>
@@ -99,7 +99,7 @@ Example
 <code class="sourceCode R"><span><span class="va">tif</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"example_s2_20m.tif"</span>, package <span class="op">=</span> <span class="st">"snowsense"</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">tif</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/detect_snow.html">detect_snow</a></span><span class="op">(</span><span class="va">x</span>, index <span class="op">=</span> <span class="st">"ndsi"</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="fl">3</span>, swir <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/detect_snow.html">detect_snow</a></span><span class="op">(</span><span class="va">x</span>, index <span class="op">=</span> <span class="st">"ndsi"</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="fl">3</span>, swir <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">index</span>        <span class="co"># index raster</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">binary_mask</span>  <span class="co"># binary snow mask</span></span>
@@ -189,7 +189,7 @@ Example
 <code class="sourceCode R"><span><span class="va">tif</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"example_s2_20m.tif"</span>, package <span class="op">=</span> <span class="st">"snowsense"</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">tif</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">scf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/snow_cover_fraction.html">snow_cover_fraction</a></span><span class="op">(</span><span class="va">x</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="fl">3</span>, swir <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"salomonson"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">scf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/snow_cover_fraction.html">snow_cover_fraction</a></span><span class="op">(</span><span class="va">x</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>green <span class="op">=</span> <span class="fl">3</span>, swir <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"salomonson"</span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 </div>
