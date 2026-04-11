@@ -72,6 +72,7 @@
   mu_t <- mu[length(mu)]
 
   sigma_b <- (mu_t * omega - mu)^2 / (omega * (1 - omega))
+  sigma_b[omega == 0 | omega == 1] <- 0
 
   mids[which.max(sigma_b)]
 }

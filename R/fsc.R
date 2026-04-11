@@ -14,7 +14,7 @@ snow_cover_fraction <- function(x, bands, method) {
 
   ndsi <- .compute_snow_index(x, index="ndsi", bands=bands) # calls helper function
   scf <- if (method=="salomonson") {
-    1.45*ndsi-0.01 # Salomonson and Appel (2004)
+    0.06 + 1.21*ndsi # Salomonson and Appel (2004)
   } else if (method=="sigmoid") {
     0.5*tanh(2.65*ndsi-1.42)+0.5 # Gascoin et al. (2020)
   } else{
