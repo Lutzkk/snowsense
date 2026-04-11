@@ -131,8 +131,8 @@ needed, for example at coarser resolutions.
 
 Two regression approaches are currently supported in the package: -
 **[Salomonson & Appel
-(2004)](https://doi.org/10.1016/j.rse.2003.10.016)**: FSC = 1.45 \*
-NDSI - 0.45 - **[Gascoin et
+(2004)](https://doi.org/10.1016/j.rse.2003.10.016)**: FSC = 0.06 + 1.21
+\* NDSI - **[Gascoin et
 al. (2020)](https://doi.org/10.3390/rs12182904)**: FSC = 0.5 \*
 tanh(2.65 \* NDSI - 1.42) + 0.5
 
