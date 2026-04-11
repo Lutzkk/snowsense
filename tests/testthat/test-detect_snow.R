@@ -12,7 +12,7 @@ test_that("detect_snow loads test tif and returns expected outputs", {
 
   res <- detect_snow(x, bands= list(
     green=3,
-    swir=11
+    swir=12
   ))
 
   expect_type(res, "list")

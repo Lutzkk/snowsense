@@ -8,7 +8,8 @@ detect_snow(
   x,
   index = "ndsi",
   bands = list(aerosol = 1, blue = 2, green = 3, red = 4, red_edge1 = 5, red_edge2 = 6,
-    red_edge3 = 7, nir = 8, narrow_nir = 9, swir1 = 10, swir2 = 11),
+    red_edge3 = 7, nir = 8, narrow_nir = 9, water_vapor = 10, cirrus = 11, swir1 = 12,
+    swir2 = 13),
   threshold = NULL
 )
 }
@@ -44,7 +45,7 @@ badly here).
 WSI is computed from HSV-transformed red, green and nir bands by combining pixel-wise
 brightness (value) and spectral color (hue), enabling robust discrimination of snow-covered
 areas based on their high reflectance and low spectral variability relative to water and
-vegetation. doi: 10.1007/s00703-020-00749-y
+vegetation. doi:10.1007/s00703-020-00749-y
 }
 \examples{
 # NDSI based snow detection

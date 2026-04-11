@@ -130,8 +130,10 @@ detect_snow <- function(
       red_edge3=7,
       nir=8,
       narrow_nir=9,
-      swir1=10,
-      swir2=11
+      water_vapor=10,
+      cirrus=11,
+      swir1=12,
+      swir2=13
     ),
     threshold = NULL
 ) {

@@ -7,19 +7,21 @@
 \description{
 A small Sentinel-2 GeoTIFF included with the snowsense package
 for demonstrations and testing.
-The raster contains four bands:
+The raster contains 13 bands:
 \describe{
-\item{Band 1}{Coastal Aerosol (Sentinel-2 band 1)}
-\item{Band 2}{Blue (Sentinel-2 band 2)}
-\item{Band 3}{Green (Sentinel-2 band 3)}
-\item{Band 4}{Red (Sentinel-2 band 4)}
-\item{Band 5}{Red Edge 1 (Sentinel-2 band 5)}
-\item{Band 6}{Red Edge 2 (Sentinel-2 band 6)}
-\item{Band 7}{Red Edge 3 (Sentinel-2 band 7)}
-\item{Band 8}{NIR (Sentinel-2 band 8)}
-\item{Band 9}{Narrow NIR (Sentinel-2 band 8A)}
-\item{Band 10}{SWIR 1 (Sentinel-2 band 11)}
-\item{Band 11}{SWIR 2 (Sentinel-2 band 12)}
+\item{Band 1 (B01)}{Coastal Aerosol}
+\item{Band 2 (B02)}{Blue}
+\item{Band 3 (B03)}{Green}
+\item{Band 4 (B04)}{Red}
+\item{Band 5 (B05)}{Red Edge 1}
+\item{Band 6 (B06)}{Red Edge 2}
+\item{Band 7 (B07)}{Red Edge 3}
+\item{Band 8 (B08)}{NIR}
+\item{Band 9 (B8A)}{Narrow NIR}
+\item{Band 10 (B09)}{Water Vapour}
+\item{Band 11 (B10)}{Cirrus}
+\item{Band 12 (B11)}{SWIR 1}
+\item{Band 13 (B12)}{SWIR 2}
 }
 }
 \details{
@@ -28,7 +30,7 @@ Zugspitzplatt in UTM zone 32N (EPSG:32632).
 
 The file can be accessed with:
 \preformatted{
-system.file("extdata", "example_s2_rgb_swir_20m.tif", package = "snowsense")
+system.file("extdata", "example_s2_20m.tif", package = "snowsense")
 }
 }
 \keyword{datasets}

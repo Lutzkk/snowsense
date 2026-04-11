@@ -7,7 +7,7 @@
 #' @returns Spatraster with Snow Cover Fraction values (clipped to 0-1)
 #' @export
 #'
-#' @examples scf <- snow_cover_fraction(x, bands=list(green=3, swir=10), method="salomonson")
+#' @examples scf <- snow_cover_fraction(x, bands=list(green=3, swir=12), method="salomonson")
 snow_cover_fraction <- function(x, bands, method) {
   stopifnot(inherits(x, "SpatRaster"))
   method <- tolower(method) #circumvent uppercase typos

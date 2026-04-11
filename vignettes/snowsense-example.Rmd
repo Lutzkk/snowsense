@@ -113,7 +113,8 @@ WSI is based on a paper from Donmez et al. (2021) and is especially good at disc
 Snow masks often contain speckle noise (isolated snow classified pixels that may be noise or small patches that can be caused by misclassification). `despeckle_snow()` removes these using majority filtering and/or a minimum patch size filter.
 
 ```{r despeckle}
-clean <- despeckle_snow(result_ndsi_otsu$binary_mask, window=9, min_pixels=5)
+clean <- despeckle_snow(result_ndsi_otsu$binary_mask,
+                        window=9, min_pixels=5)
 ```
 
 ```{r, despeckle_plot, echo=FALSE, fig.width=10, fig.height=4}
@@ -123,13 +124,15 @@ mask_clean <- as.factor(mask_clean)
 
 p_before <- ggplot() + rgb_layer +
   geom_spatraster(data = mask_otsu) +
-  scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
+  scale_fill_manual(values = c("1" = "cyan"), na.value = NA,
+                    na.translate = FALSE, guide = "none") +
   theme_minimal() + no_axes +
   labs(title = "Before Despeckling")
 
 p_after <- ggplot() + rgb_layer +
   geom_spatraster(data = mask_clean) +
-  scale_fill_manual(values = c("1" = "cyan"), na.value = NA, na.translate = FALSE, guide = "none") +
+  scale_fill_manual(values = c("1" = "cyan"), na.value = NA,
+                    na.translate = FALSE, guide = "none") +
   theme_minimal() + no_axes +
   labs(title = "After Despeckling (window=9, min_pixels=5)")
 
@@ -147,8 +150,12 @@ Two regression approaches are currently supported in the package:
 - **[Gascoin et al. (2020)](https://doi.org/10.3390/rs12182904)**: FSC = 0.5 *  tanh(2.65 * NDSI - 1.42) + 0.5
 
 ```{r, fsc}
-fsc_sal <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"), method = "salomonson")
-fsc_sig <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"), method = "sigmoid")
+#salomonson
+fsc_sal <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"),
+                               method = "salomonson")
+#gascoin
+fsc_sig <- snow_cover_fraction(ds, bands = list(green = "B03", swir = "B11"),
+                               method = "sigmoid")
 ```
 
 ```{r, fsc_plot, echo=FALSE, fig.width=10, fig.height=4}
